@@ -151,3 +151,46 @@ See [our paper](https://arxiv.org/abs/2107.00644) for additional results.
 ## Acknowledgements
 
 We would like to thank the numerous researchers and engineers involved in work of which this work is based on. This repository is a product of our work on [SVEA](https://arxiv.org/abs/2107.00644), [SODA](https://arxiv.org/abs/2011.13389) and [PAD](https://arxiv.org/abs/2007.04309). Our SAC implementation is based on [this repository](https://github.com/denisyarats/pytorch_sac_ae), the original DMControl is available [here](https://github.com/deepmind/dm_control), and the gym wrapper for it is available [here](https://github.com/denisyarats/dmc2gym). The [Distracting Control Suite](https://arxiv.org/abs/2101.02722) environments were adapted from [this](https://github.com/google-research/google-research/tree/master/distracting_control) implementation. PAD, RAD, CURL, and DrQ baselines are based on their official implementations provided [here](https://github.com/nicklashansen/policy-adaptation-during-deployment), [here](https://github.com/MishaLaskin/rad), [here](https://github.com/MishaLaskin/curl), and [here](https://github.com/denisyarats/drq), respectively.
+
+# Common Fixes  
+## MuJoCo  
+### Problem  
+Installation fails due to mujoco header issue  
+### Solution  
+```bash
+mkdir -p ~/.mujoco
+wget https://www.roboti.us/download/mujoco200_linux.zip
+unzip mujoco200_linux.zip -d ~/.mujoco/
+```
+```bash
+export MUJOCO_PY_MUJOCO_PATH=~/.mujoco/mujoco200_linux
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MUJOCO_PY_MUJOCO_PATH/bin
+```
+```bash
+source ~/.bashrc
+```  
+
+### Problem  
+`libmujoco200.so: undefined symbol: __glewBindBuffer`  
+### Solution  
+```bash
+sudo apt-get install libglew-dev
+```  
+
+### Problem  
+`dm_control.mujoco.wrapper.core.Error: Could not register license.`  
+### Solution  
+```bash
+touch ~/.mujoco/mjkey.txt
+```
+Copy paste content from https://www.roboti.us/file/mjkey.txt into file `~/.mujoco/mjkey.txt`  
+```bash
+chmod 644 ~/.mujoco/mjkey.txt
+```  
+
+## Gym  
+` if not env_id in gym.envs.registry.env_specs: AttributeError: 'dict' object has no attribute 'env_specs'`  
+### Solution  
+```bash
+pip install gym==0.23.0
+```
